@@ -8,7 +8,8 @@ import { useState } from 'react';
 import CardLists from './CardLists/CardList';
 import { ColumnType } from '@/types/Board';
 import { mapOrder } from '@/utils/Sort';
-
+import { useSortable } from '@dnd-kit/sortable';
+import {CSS} from '@dnd-kit/utilities'
 
 const items: MenuProps['items'] = [
     {
@@ -71,9 +72,19 @@ const items: MenuProps['items'] = [
 ];
 function Column({ column }: { column: ColumnType }) {
     const [open, setOpen] = useState(false);
+    const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
+        id: column._id, data: { ...column }
+    });
+    const dndKitColumnStyles = { transform: CSS.Translate.toString(transform), transition }
+
     const orderedCard = mapOrder(column.cards, column.cardOrderIds, '_id')
     return (
-        <div className='max-w-[300px] min-w-[300px] h-fit bg-[#EBECF0] rounded-md box-shadow-md max-h-[calc(var(--boardcontent-height)-50px)] overflow-y-auto'>
+        <div className='max-w-[300px] min-w-[300px] h-fit bg-[#EBECF0] rounded-md box-shadow-md max-h-[calc(var(--boardcontent-height)-50px)] overflow-y-auto'
+             ref={setNodeRef}
+             style={dndKitColumnStyles}
+             {...attributes}
+             {...listeners}
+        >
             {/*Column Header */}
             <div className='p-4 flex justify-between items-center'>
                 <h2 className='text-lg font-semibold'>{column.title}</h2>
