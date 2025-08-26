@@ -84,6 +84,7 @@ function Column({ column }: { column: ColumnType }) {
              style={dndKitColumnStyles}
              {...attributes}
              {...listeners}
+
         >
             {/*Column Header */}
             <div className='p-4 flex justify-between items-center'>
