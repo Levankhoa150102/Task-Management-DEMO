@@ -13,17 +13,21 @@ function Header() {
             </div>
 
             <div className=' flex items-center gap-4'>
-                <Input size="large" placeholder="Search..." prefix={<SearchOutlined />} />
+                <Input
+                    size="large"
+                    placeholder="Search..."
+                    prefix={<SearchOutlined />}
+                />
                 <Tooltip title="Notification">
                     <Badge count={9} size='small' className='cursor-pointer'>
-                        <BellOutlined className='text-2xl' color='white' />
+                        <BellOutlined className='text-2xl' style={{ color: 'white' }} />
                     </Badge>
                 </Tooltip>
                 <Tooltip title="Help">
-                    <QuestionCircleOutlined className='text-2xl cursor-pointer'  />
+                    <QuestionCircleOutlined className='text-2xl cursor-pointer' style={{ color: 'white' }} />
                 </Tooltip>
                 <Tooltip title="Profile">
-                    <div className='w-16 h-16 flex items-center'>
+                    <div className='w-16 h-16 flex items-center '>
                         <Avatar icon={<UserOutlined />} className='cursor-pointer' />
                     </div>
                 </Tooltip>
