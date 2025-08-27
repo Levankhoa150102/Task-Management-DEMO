@@ -1,6 +1,8 @@
 import ExImage from '@/public/image.png';
 import { CardType } from '@/types/Board';
 import { CommentOutlined, PaperClipOutlined, UserOutlined } from '@ant-design/icons';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import Button from 'antd/es/button';
 import Image from 'next/image';
 
@@ -8,8 +10,18 @@ function Card({ card }: { card: CardType }) {
     const checkShowAction = () => {
         return !!card.memberIds.length || !!card.comments.length || !!card.attachments.length;
     }
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
+          id: card._id, data: { ...card },
+        });
+    const dndKitCardStyles = { transform: CSS.Translate.toString(transform), transition, opacity: isDragging ? 0.5 : 1 }
+
     return (
-        <div className='bg-white rounded-md shadow-md'>
+        <div className='bg-white rounded-md shadow-md' 
+             ref={setNodeRef}
+             style={dndKitCardStyles}
+             {...attributes}
+             {...listeners}
+            >
             {card.cover && <Image src={ExImage} alt="Card Image" />}
             <p className='p-3'>{card.title}</p>
             {checkShowAction() && <div className='px-1 pb-2'>
