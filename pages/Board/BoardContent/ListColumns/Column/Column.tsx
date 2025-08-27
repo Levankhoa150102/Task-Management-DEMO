@@ -75,7 +75,12 @@ function Column({ column }: { column: ColumnType }) {
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
         id: column._id, data: { ...column }
     });
-    const dndKitColumnStyles = { transform: CSS.Translate.toString(transform), transition, height: '100%', opacity: isDragging ? 0.5 : 1 }
+    const dndKitColumnStyles = {
+        transform: CSS.Translate.toString(transform),
+        transition,
+        height: '100%',
+        opacity: isDragging ? 0.5 : 1,
+    }
 
     const orderedCard = mapOrder(column.cards, column.cardOrderIds, '_id')
     return (

@@ -11,17 +11,23 @@ function Card({ card }: { card: CardType }) {
         return !!card.memberIds.length || !!card.comments.length || !!card.attachments.length;
     }
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-          id: card._id, data: { ...card },
-        });
-    const dndKitCardStyles = { transform: CSS.Translate.toString(transform), transition, opacity: isDragging ? 0.5 : 1 }
+        id: card._id, data: { ...card },
+    });
+    const dndKitCardStyles = {
+        transform: CSS.Translate.toString(transform),
+        transition,
+        opacity: isDragging ? 0.5 : 1,
+        border: isDragging ? '1px solid #2ecc71' : 'none',
+
+    }
 
     return (
-        <div className='bg-white rounded-md shadow-md' 
-             ref={setNodeRef}
-             style={dndKitCardStyles}
-             {...attributes}
-             {...listeners}
-            >
+        <div className='bg-white rounded-md shadow-md'
+            ref={setNodeRef}
+            style={dndKitCardStyles}
+            {...attributes}
+            {...listeners}
+        >
             {card.cover && <Image src={ExImage} alt="Card Image" />}
             <p className='p-3'>{card.title}</p>
             {checkShowAction() && <div className='px-1 pb-2'>
