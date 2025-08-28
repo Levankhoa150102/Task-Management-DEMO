@@ -1,6 +1,3 @@
-
-
-import { useState } from 'react';
 import { CardType } from '@/types/Board';
 import Card from './Card/Card';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
@@ -13,7 +10,6 @@ function CardLists({ cards }: { cards: CardType[]; }) {
         setSelectedCard(card);
         setModalOpen(true);
     };
-
 
     return (
         <>

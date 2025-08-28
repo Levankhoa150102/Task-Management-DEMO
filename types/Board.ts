@@ -14,6 +14,7 @@ export type CardType = {
     memberIds: string[];
     comments: string[];
     attachments: string[];
+    FE_PlaceholderCard?: boolean;
 }
 
 export type ColumnType = {
