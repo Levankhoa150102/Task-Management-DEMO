@@ -275,7 +275,7 @@ function BoardContent({ board }: { board: BoardType }) {
                     collisionDetection={closestCorners}
                 >
 
-                    <div className='h-[var(--boardcontent-height)]  bg-[#1976D2] p-4'>
+                    <div className='h-[var(--boardcontent-height)]  bg-[#1976D2] dark:bg-[#34495e] py-4 px-2'>
                         {/*Column Lists */}
                         <ListColumns columns={orderColumn}  />
                         <DragOverlay dropAnimation={dropAnimation}>

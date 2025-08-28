@@ -32,7 +32,7 @@ const items = [
 const SideBar = () => {
 	return (
 		<aside className="h-screen w-64 bg-white shadow-md flex flex-col">
-			<div className="h-16 flex items-center justify-center font-bold text-xl border-b">Task Manager</div>
+			<div className="h-16 flex items-center justify-center font-bold text-xl border-b">ManageWise</div>
 			<Menu
 				mode="inline"
 				defaultSelectedKeys={['dashboard']}

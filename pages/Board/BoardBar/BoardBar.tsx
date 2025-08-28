@@ -4,7 +4,7 @@ import { Button, Tooltip } from 'antd/es';
 import Avatar from 'antd/es/avatar';
 function BoardBar({board}: {board: BoardType}) {
     return (
-        <div className=' h-[var(--boardbar-height)] flex items-center bg-[#1976D2] justify-between gap-2 overflow-x-auto'>
+        <div className=' h-[var(--boardbar-height)] flex items-center bg-[#1976D2] dark:bg-[#34495e] justify-between gap-2 overflow-x-auto'>
             <div className='flex gap-2'>
                 <Button type="text" block>
                     <FileTextOutlined className='text-xl' style={{ color: 'white' }} />

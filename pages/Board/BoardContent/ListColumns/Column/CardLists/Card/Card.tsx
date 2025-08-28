@@ -30,7 +30,7 @@ function Card({ card }: { card: CardType }) {
     }
 
     return (
-        <div className={`bg-white rounded-md shadow-md ${card?.FE_PlaceholderCard ? 'h-0' : 'unset'} ${card?.FE_PlaceholderCard ? 'overflow-hidden' : ''}`}
+        <div className={`bg-white rounded-md shadow-md dark:bg-[#121212] ${card?.FE_PlaceholderCard ? 'h-0' : 'unset'} ${card?.FE_PlaceholderCard ? 'overflow-hidden' : ''}`}
             ref={setNodeRef}
             style={dndKitCardStyles}
             {...attributes}
@@ -43,7 +43,7 @@ function Card({ card }: { card: CardType }) {
                     {card.priority.charAt(0).toUpperCase() + card.priority.slice(1)}
                 </span>
             )}
-            <p className='p-3'>{card.title}</p>
+            <p className='p-3 dark:text-white'>{card.title}</p>
             {checkShowAction() && <div className='px-1 pb-2'>
                 {!!card.memberIds.length && <Button type="link" className='text-[#1976D2]'>
                     <UserOutlined />
