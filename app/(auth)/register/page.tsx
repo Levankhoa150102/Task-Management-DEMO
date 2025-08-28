@@ -1,9 +1,9 @@
-import Authentication from '@/pages/Auth/Authentication';
+import Register from '@/pages/Auth/Register';
 import React from 'react';
 
 function RegisterPage() {
     return (
-        <Authentication isLogin={false} />
+        <Register />
 
     );
 }

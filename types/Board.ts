@@ -1,10 +1,16 @@
+import { StaticImageData } from "next/image";
+
 export type CardType = {
     _id: string;
     boardId: string;
     columnId: string;
     title: string;
     description: string | null;
-    cover: string | null;
+    cover: {
+        src: StaticImageData | string;
+        alt: string
+    } | null;
+    priority: 'low' | 'medium' | 'high' | string;
     memberIds: string[];
     comments: string[];
     attachments: string[];

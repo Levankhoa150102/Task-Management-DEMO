@@ -2,10 +2,10 @@
 import { FileAddOutlined } from '@ant-design/icons';
 import Button from 'antd/es/button';
 import Column from './Column/Column';
-import { ColumnType } from '@/types/Board';
+import { CardType, ColumnType } from '@/types/Board';
 import { SortableContext, horizontalListSortingStrategy } from '@dnd-kit/sortable';
 
-function ListColumns({ columns }: { columns: ColumnType[] }) {
+function ListColumns({ columns }: { columns: ColumnType[]; }) {
 
     return (
         <SortableContext items={columns.map(column => column._id)} strategy={horizontalListSortingStrategy}>
