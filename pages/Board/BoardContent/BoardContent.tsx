@@ -5,7 +5,7 @@ import { mapOrder } from '@/utils/Sort';
 import { DndContext, DragEndEvent, PointerSensor, useSensor, useSensors, MouseSensor, TouchSensor, DragStartEvent, DragOverlay, defaultDropAnimationSideEffects, DragOverEvent, closestCorners, Active, Over } from '@dnd-kit/core';
 import { useEffect, useState } from 'react';
 import { arrayMove } from '@dnd-kit/sortable';
-import { cloneDeep } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash'
 
 
 import Column from './ListColumns/Column/Column';
@@ -13,6 +13,7 @@ import Card from './ListColumns/Column/CardLists/Card/Card';
 import SideBar from '@/components/primary-ui/SideBar';
 import CardModal from '@/components/primary-ui/Modal';
 import { ModalProvider, useModalContext } from '@/context/ModalContent';
+import { GeneratePlaceholderCard } from '@/utils/GeneratePlaceHolderCard';
 
 const ACTIVE_DRAG_ITEM_TYPE = {
     COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
@@ -73,6 +74,11 @@ function BoardContent({ board }: { board: BoardType }) {
                 //Xóa card ở column active (column cũ)
                 nextActiveColumn.cards = nextActiveColumn.cards.filter((card: CardType) => card._id !== activeDraggingCardId)
 
+                //Thêm placeholder card nếu column rỗng
+                if (isEmpty(nextActiveColumn.cards)) {
+                    nextActiveColumn.cards = [GeneratePlaceholderCard(nextActiveColumn)];
+                }
+
                 //Cập nhật lại mảng cardOrderIds cho chuẩn dữ liệu
                 nextActiveColumn.cardOrderIds = nextActiveColumn.cards.map((card: CardType) => card._id)
             }
@@ -83,6 +89,9 @@ function BoardContent({ board }: { board: BoardType }) {
 
                 //Tiếp theo là thêm card đang kéo vào overColumn theo vị trí index mới
                 nextOverColumn.cards = nextOverColumn.cards.toSpliced(newCardIndex, 0, activeDraggingCardData)
+
+                //Xóa placeholder card nếu có trong column
+                nextOverColumn.cards = nextOverColumn.cards.filter((card: CardType) => !card.FE_PlaceholderCard)
 
                 //Cập nhật lại mảng cardOrderIds cho chuẩn dữ liệu
                 nextOverColumn.cardOrderIds = nextOverColumn.cards.map((card: CardType) => card._id)

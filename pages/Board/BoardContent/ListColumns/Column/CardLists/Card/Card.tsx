@@ -7,6 +7,14 @@ import Button from 'antd/es/button';
 import Image from 'next/image';
 
 function Card({ card }: { card: CardType }) {
+    const getPriorityColor = (priority?: string) => {
+        switch (priority) {
+            case 'high': return 'bg-red-500 text-white';
+            case 'medium': return 'bg-yellow-400 text-gray-800';
+            case 'low': return 'bg-green-500 text-white';
+            default: return 'bg-gray-300 text-gray-700';
+        }
+    };
     const checkShowAction = () => {
         return !!card.memberIds.length || !!card.comments.length || !!card.attachments.length;
     }
@@ -22,13 +30,19 @@ function Card({ card }: { card: CardType }) {
     }
 
     return (
-        <div className='bg-white rounded-md shadow-md'
+        <div className={`bg-white rounded-md shadow-md ${card?.FE_PlaceholderCard ? 'h-0' : 'unset'} ${card?.FE_PlaceholderCard ? 'overflow-hidden' : ''}`}
             ref={setNodeRef}
             style={dndKitCardStyles}
             {...attributes}
             {...listeners}
         >
             {card.cover && <Image src={ExImage} alt="Card Image" />}
+            {/* Priority badge */}
+            {card.priority && (
+                <span className={`ml-3 mt-2 inline-block px-2 py-1 rounded text-xs font-semibold ${getPriorityColor(card.priority)}`}>
+                    {card.priority.charAt(0).toUpperCase() + card.priority.slice(1)}
+                </span>
+            )}
             <p className='p-3'>{card.title}</p>
             {checkShowAction() && <div className='px-1 pb-2'>
                 {!!card.memberIds.length && <Button type="link" className='text-[#1976D2]'>
