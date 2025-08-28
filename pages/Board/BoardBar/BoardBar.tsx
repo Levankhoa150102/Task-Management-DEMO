@@ -14,17 +14,17 @@ function BoardBar({board}: {board: BoardType}) {
                     {board.type === 'public' ? <UnlockOutlined className='text-xl' style={{ color: 'white' }}/> : <LockOutlined className='text-xl' style={{ color: 'white' }}/>}
                     <span className='text-white'>{board.type === 'public' ? 'Public Workspace' : 'Private Workspace'}</span>
                 </Button>
-                <Button type="text" block>
+                {/* <Button type="text" block>
                     <AppstoreAddOutlined className='text-xl' style={{ color: 'white' }} />
                     <span className='text-white'>Add to Google Drive</span>
                 </Button>
                 <Button type="text" block>
                     <RocketOutlined className='text-xl' style={{ color: 'white' }} />
                     <span className='text-white'>Automation</span>
-                </Button>
+                </Button> */}
             </div>
 
-            <div className='flex gap-2'>
+            {/* <div className='flex gap-2'>
                 <Button type='text' block>
                     <FilterOutlined className='text-xl' style={{ color: 'white' }} />
                     <span className='text-white'>Filter</span>
@@ -42,7 +42,7 @@ function BoardBar({board}: {board: BoardType}) {
                         <Avatar style={{ backgroundColor: '#1677ff' }} icon={<AntDesignOutlined />} />
                 </div>
 
-            </div>
+            </div> */}
         </div>
     );
 }

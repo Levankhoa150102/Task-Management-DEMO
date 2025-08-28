@@ -1,9 +1,31 @@
 'use client'
-import { AppstoreFilled, BellOutlined, QuestionCircleOutlined, SearchOutlined, UserOutlined, } from '@ant-design/icons';
+import { AppstoreFilled, BellOutlined, LogoutOutlined, QuestionCircleOutlined, SearchOutlined, UserOutlined, } from '@ant-design/icons';
 import Badge from 'antd/es/badge';
 import Input from 'antd/es/input';
 import Avatar from 'antd/es/avatar'
 import Tooltip from 'antd/es/tooltip'
+import Dropdown from 'antd/es/dropdown';
+import { MenuProps } from 'antd/es/menu';
+import { redirect } from 'next/navigation';
+
+const items: MenuProps['items'] = [
+    {
+        label: (
+            <div className='space-x-2'>
+                <LogoutOutlined />
+                <span>Logout</span>
+            </div>
+        ),
+        key: '0',
+    },
+
+];
+  const onClick: MenuProps['onClick'] = (e) => {
+    if (e?.key === '0') {
+        redirect('/login');
+    }
+  };
+
 function Header() {
     return (
         <div className='bg-[#1565c0] h-[var(--header-height)] flex items-center justify-between px-4'>
@@ -26,11 +48,18 @@ function Header() {
                 <Tooltip title="Help">
                     <QuestionCircleOutlined className='text-2xl cursor-pointer' style={{ color: 'white' }} />
                 </Tooltip>
-                <Tooltip title="Profile">
-                    <div className='w-16 h-16 flex items-center '>
+                <div className='w-16 h-16 flex items-center'>
+                    <Dropdown
+                        menu={{
+                            items,
+                            onClick: onClick
+                        }}
+                        trigger={['click']}
+                        
+                    >
                         <Avatar icon={<UserOutlined />} className='cursor-pointer' />
-                    </div>
-                </Tooltip>
+                    </Dropdown>
+                </div>
             </div>
         </div>
     );

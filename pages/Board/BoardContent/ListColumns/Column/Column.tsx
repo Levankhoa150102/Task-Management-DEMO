@@ -6,7 +6,7 @@ import type { MenuProps } from 'antd/es/menu';
 import Space from 'antd/es/space';
 import { useState } from 'react';
 import CardLists from './CardLists/CardList';
-import { ColumnType } from '@/types/Board';
+import { CardType, ColumnType } from '@/types/Board';
 import { mapOrder } from '@/utils/Sort';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities'
@@ -70,7 +70,7 @@ const items: MenuProps['items'] = [
         key: '5',
     },
 ];
-function Column({ column }: { column: ColumnType }) {
+function Column({ column }: { column: ColumnType; }) {
     const [open, setOpen] = useState(false);
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
         id: column._id, data: { ...column }
@@ -114,7 +114,7 @@ function Column({ column }: { column: ColumnType }) {
                 </div>
 
                 {/*Column Cards List */}
-                <CardLists cards={orderedCard} />
+                <CardLists cards={orderedCard}  />
 
                 {/*Column Footer */}
                 <div className='flex items-center justify-between p-4 '>

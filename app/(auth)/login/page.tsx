@@ -1,9 +1,9 @@
-import Authentication from '@/pages/Auth/Authentication';
+import Login from '@/pages/Auth/Login';
 import React from 'react';
 
 function LoginPage() {
     return (
-        <Authentication isLogin={true} />
+        <Login />
     );
 }
 
