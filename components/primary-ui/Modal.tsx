@@ -28,8 +28,8 @@ const CardModal: React.FC<CardModalProps> = ({ open, onClose, card }) => {
   };
 
   return (
-    <Modal open={open} onCancel={onClose} footer={null} centered width={700}>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <Modal open={open} onCancel={onClose} footer={null} centered width={700} >
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 dark:bg-[#333643]">
         {/* Left: Main Info */}
         <div className="flex flex-col gap-4">
           {/* Cover Image */}
@@ -40,7 +40,7 @@ const CardModal: React.FC<CardModalProps> = ({ open, onClose, card }) => {
           )}
           {/* Title & Priority */}
           <div className="flex items-center gap-3 mb-1">
-            <h2 className="text-2xl font-bold text-gray-800">{card.title}</h2>
+            <h2 className="text-2xl font-bold text-gray-800 dark:text-white">{card.title}</h2>
             {card.priority && (
               <span className={`px-2 py-1 rounded text-xs font-semibold ${getPriorityColor(card.priority)}`}>
                 {formatName(card.priority)}
@@ -49,7 +49,7 @@ const CardModal: React.FC<CardModalProps> = ({ open, onClose, card }) => {
           </div>
           {/* Description */}
           {card.description && (
-            <p className="text-gray-600 mb-2 whitespace-pre-line">{card.description}</p>
+            <p className="text-gray-600 mb-2 whitespace-pre-line dark:text-white">{card.description}</p>
           )}
         </div>
 
@@ -59,10 +59,10 @@ const CardModal: React.FC<CardModalProps> = ({ open, onClose, card }) => {
           <div>
             <div className="flex items-center gap-2 text-blue-600 font-semibold text-base mb-1">
               <UserOutlined />
-              Members: <span className="text-gray-800">{card.memberIds?.length || 0}</span>
+              Members: <span className="text-gray-800 dark:text-white">{card.memberIds?.length || 0}</span>
             </div>
             {card.memberIds && card.memberIds.length > 0 && (
-              <ul className="pl-6 list-disc text-gray-700 text-sm">
+              <ul className="pl-6 list-disc text-gray-700 text-sm dark:text-white">
                 {card.memberIds.map((m, idx) => (
                   <li key={idx}>{m}</li>
                 ))}
@@ -74,10 +74,10 @@ const CardModal: React.FC<CardModalProps> = ({ open, onClose, card }) => {
           <div>
             <div className="flex items-center gap-2 text-green-600 font-semibold text-base mb-1">
               <CommentOutlined />
-              Comments: <span className="text-gray-800">{card.comments?.length || 0}</span>
+              Comments: <span className="text-gray-800 dark:text-white">{card.comments?.length || 0}</span>
             </div>
             {card.comments && card.comments.length > 0 && (
-              <ul className="pl-6 list-disc text-gray-700 text-sm">
+              <ul className="pl-6 list-disc text-gray-700 text-sm dark:text-white">
                 {card.comments.map((c, idx) => (
                   <li key={idx}>{c}</li>
                 ))}
@@ -89,10 +89,10 @@ const CardModal: React.FC<CardModalProps> = ({ open, onClose, card }) => {
           <div>
             <div className="flex items-center gap-2 text-purple-600 font-semibold text-base mb-1">
               <PaperClipOutlined />
-              Attachments: <span className="text-gray-800">{card.attachments?.length || 0}</span>
+              Attachments: <span className="text-gray-800 dark:text-white">{card.attachments?.length || 0}</span>
             </div>
             {card.attachments && card.attachments.length > 0 && (
-              <ul className="pl-6 list-disc text-gray-700 text-sm">
+              <ul className="pl-6 list-disc text-gray-700 text-sm dark:text-white">
                 {card.attachments.map((a, idx) => (
                   <li key={idx}>{a}</li>
                 ))}

@@ -28,10 +28,10 @@ const items: MenuProps['items'] = [
 
 function Header() {
     return (
-        <div className='bg-[#1565c0] h-[var(--header-height)] flex items-center justify-between px-4'>
+        <div className='bg-[#1565c0] dark:bg-[#2c3e50] h-[var(--header-height)] flex items-center justify-between px-4 overflow-x-auto space-x-4 overflow-y-hidden'>
             <div className='text-white flex items-center gap-2'>
                 <AppstoreFilled className='text-xl' />
-                <p className='text-xl font-bold '>Task management</p>
+                <p className='text-xl font-bold '>ManageWise</p>
             </div>
 
             <div className=' flex items-center gap-4'>

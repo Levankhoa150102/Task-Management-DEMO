@@ -88,12 +88,12 @@ function Column({ column }: { column: ColumnType; }) {
             style={dndKitColumnStyles}
             {...attributes}
         >
-            <div className='max-w-[300px] min-w-[300px] h-fit bg-[#EBECF0] rounded-md box-shadow-md max-h-[calc(var(--boardcontent-height)-50px)] overflow-y-auto'
+            <div className='max-w-[300px] min-w-[300px] h-fit bg-[#EBECF0] dark:bg-[#333643] rounded-md box-shadow-md max-h-[calc(var(--boardcontent-height)-50px)] overflow-y-auto'
                 {...listeners}
             >
                 {/*Column Header */}
                 <div className='p-4 flex justify-between items-center'>
-                    <h2 className='text-lg font-semibold'>{column.title}</h2>
+                    <h2 className='text-lg font-semibold dark:text-white'>{column.title}</h2>
                     <Dropdown
                         menu={{
                             items,
@@ -106,7 +106,7 @@ function Column({ column }: { column: ColumnType; }) {
                     >
                         <Space>
                             <CaretDownOutlined
-                                className='cursor-pointer hover:scale-110 transition-transform duration-200'
+                                className='cursor-pointer hover:scale-110 transition-transform duration-200 dark:text-white'
                                 style={{ transform: open ? 'rotate(180deg)' : 'rotate(0deg)' }}
                             />
                         </Space>
