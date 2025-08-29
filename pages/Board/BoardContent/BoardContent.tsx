@@ -1,7 +1,7 @@
 'use client'
 import { BoardType, CardType, ColumnType } from '@/types/Board';
 import { mapOrder } from '@/utils/Sort';
-import { Active, DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, MouseSensor, Over, PointerSensor, TouchSensor, closestCorners, defaultDropAnimationSideEffects, useSensor, useSensors } from '@dnd-kit/core';
+import { Active, DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, MouseSensor, Over, TouchSensor, closestCorners, defaultDropAnimationSideEffects, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import { cloneDeep, isEmpty } from 'lodash';
 import { useEffect, useState } from 'react';
@@ -10,10 +10,10 @@ import ListColumns from './ListColumns/ListColumns';
 
 import CardModal from '@/components/primary-ui/Modal';
 import { useModalContext } from '@/context/ModalContent';
+import { generateId } from '@/utils/GenerateId';
 import { GeneratePlaceholderCard } from '@/utils/GeneratePlaceHolderCard';
 import Card from './ListColumns/Column/CardLists/Card/Card';
 import Column from './ListColumns/Column/Column';
-import { generateId } from '@/utils/GenerateId';
 
 const ACTIVE_DRAG_ITEM_TYPE = {
     COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
@@ -23,12 +23,6 @@ const ACTIVE_DRAG_ITEM_TYPE = {
 
 
 function BoardContent({ board }: { board: BoardType }) {
-    const pointerSensor = useSensor(PointerSensor, {
-        activationConstraint: { //Require a minimum distance of 10px to activate drag
-            distance: 10,
-        },
-    })
-
     const mouseSensor = useSensor(MouseSensor, {
         activationConstraint: { //Require a minimum distance of 10px to activate drag
             distance: 10,
@@ -115,10 +109,24 @@ function BoardContent({ board }: { board: BoardType }) {
     const [oldColumnWhenDraggingCard, setOldColumnWhenDraggingCard] = useState<ColumnType | null>(null)
 
 
+
+    // Load from localStorage on mount, else from board prop
     useEffect(() => {
-        const orderedColumn = mapOrder(board.columns, board.columnOrderIds, '_id')
-        setOrderColumn(orderedColumn)
-    }, [board])
+        const saved = typeof window !== 'undefined' ? localStorage.getItem('boardData') : null;
+        if (saved) {
+            setOrderColumn(JSON.parse(saved));
+        } else {
+            const orderedColumn = mapOrder(board.columns, board.columnOrderIds, '_id');
+            setOrderColumn(orderedColumn);
+        }
+    }, [board]);
+    // Save to localStorage whenever orderColumn changes
+    useEffect(() => {
+        if (orderColumn.length > 0) {
+            localStorage.setItem('boardData', JSON.stringify(orderColumn));
+        }
+    }, [orderColumn]);
+
 
     // Add new column
     const handleAddColumn = () => {
@@ -149,7 +157,56 @@ function BoardContent({ board }: { board: BoardType }) {
             },
         ]);
     };
+    //Delete column
+    const handleDeleteColumn = (columnId: string) => {
+        setOrderColumn(cols => cols.filter(col => col._id !== columnId));
+    }
 
+    // Add new card
+    const handleAddCard = (columnId: string) => {
+        setOrderColumn(cols =>
+            cols.map(col => {
+                if (col._id === columnId) {
+                    const newCardId = generateId('card-id');
+                    return {
+                        ...col,
+                        cards: [
+                            ...col.cards,
+                            {
+                                _id: newCardId,
+                                boardId: col.boardId,
+                                columnId: col._id,
+                                title: 'New Card',
+                                description: '',
+                                cover: null,
+                                priority: 'low',
+                                memberIds: [],
+                                comments: [],
+                                attachments: [],
+                            },
+                        ],
+                        cardOrderIds: [...col.cardOrderIds, newCardId],
+                    };
+                }
+                return col;
+            })
+        );
+    };
+
+    //Edit card
+    const handleEditCard = (updatedCard: CardType) => {
+        setOrderColumn(cols =>
+            cols.map(col =>
+                col._id === findColumnByCardId(updatedCard._id)?._id
+                    ? {
+                        ...col,
+                        cards: col.cards.map(card => card._id === updatedCard._id ? updatedCard : card),
+                    }
+                    : col
+            )
+        );
+        setSelectedCard(updatedCard); 
+    };
     //Remove card
     const handleDeleteCard = (cardId: string) => {
         setOrderColumn(cols =>
@@ -163,45 +220,14 @@ function BoardContent({ board }: { board: BoardType }) {
                     : col
             )
         );
-    }
-
-    const handleDeleteColumn = (columnId: string) => {
-        setOrderColumn(cols => cols.filter(col => col._id !== columnId));
-    }
-
-    // Add new card
-    const handleAddCard = (columnId: string) => {
-        setOrderColumn(cols =>
-            cols.map(col =>
-                col._id === columnId
-                    ? {
-                        ...col,
-                        cards: [
-                            ...col.cards,
-                            {
-                                _id: generateId('card-id'),
-                                boardId: col.boardId,
-                                columnId: col._id,
-                                title: 'New Card',
-                                description: '',
-                                cover: null,
-                                priority: 'low',
-                                memberIds: [],
-                                comments: [],
-                                attachments: [],
-                            },
-                        ],
-                        cardOrderIds: [...col.cardOrderIds, generateId('card-id')],
-                    }
-                    : col
-            )
-        );
     };
+
 
     const findColumnByCardId = (cardId: string) => {
         return orderColumn.find(column => column.cards.map(card => card._id)?.includes(cardId))
     }
 
+    //DND kit function
     const handleDragStart = (e: DragStartEvent) => {
         // console.log('handleDragStart', e);
         setActiveDragItemId(e?.active?.id as string)
@@ -229,9 +255,6 @@ function BoardContent({ board }: { board: BoardType }) {
         // Find 2 columns following cardIds
         const activeColumn = findColumnByCardId(activeDraggingCardId as string)
         const overColumn = findColumnByCardId(overCardId as string)
-
-        console.log('activeColumn', activeColumn);
-        console.log('overColumn', overColumn);
 
         if (!activeColumn || !overColumn) return
 
@@ -334,6 +357,7 @@ function BoardContent({ board }: { board: BoardType }) {
 
     }
 
+    //Animation when dropping (DND kit)
     const dropAnimation = {
         sideEffects: defaultDropAnimationSideEffects({
             styles: { active: { opacity: '0.5' } }
@@ -359,7 +383,11 @@ function BoardContent({ board }: { board: BoardType }) {
 
                 <div className='h-[var(--boardcontent-height)]  bg-[#1976D2] dark:bg-[#34495e] py-4 px-2'>
                     {/*Column Lists */}
-                    <ListColumns columns={orderColumn} onAddColumn={handleAddColumn} onAddCard={handleAddCard} onDeleteColumn={handleDeleteColumn} />
+                    <ListColumns columns={orderColumn}
+                        onAddColumn={handleAddColumn}
+                        onAddCard={handleAddCard}
+                        onDeleteColumn={handleDeleteColumn}
+                    />
                     <DragOverlay dropAnimation={dropAnimation}>
                         {(!activeDragItemType) && null}
                         {(activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) && (
@@ -370,7 +398,7 @@ function BoardContent({ board }: { board: BoardType }) {
                         )}
                     </DragOverlay>
                 </div>
-                <CardModal open={modalOpen} onClose={handleModalClose} card={selectedCard} onDeleteCard={handleDeleteCard} />
+                <CardModal open={modalOpen} onClose={handleModalClose} card={selectedCard} onDeleteCard={handleDeleteCard} onEditCard={handleEditCard} />
 
             </DndContext>
         </div >

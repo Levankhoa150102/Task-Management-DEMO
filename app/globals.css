@@ -1,4 +1,55 @@
+
+
 @import "tailwindcss";
+
+/* Custom Scrollbar Styles */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #bdbdbd;
+  border-radius: 8px;
+  border: 2px solid #f5f5f5;
+}
+
+::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 8px;
+}
+
+
+@media (prefers-color-scheme: dark) {
+  .ant-select-dropdown {
+    background-color: #23242b !important;
+    color: #fff !important;
+  }
+  .ant-select-item-option-content {
+    color: #fff !important;
+  }
+  .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+    background-color: #444857 !important;
+    color: #fff !important;
+  }
+  .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+    background-color: #2b5591 !important; 
+    color: #fff !important;
+  }
+  .ant-select-item-option-selected .ant-select-item-option-state {
+    color: #fff !important;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar-thumb {
+    background: #444857;
+    border: 2px solid #22232b;
+  }
+  ::-webkit-scrollbar-track {
+    background: #22232b;
+  }
+}
 
 :root {
   --header-height: 58px;
@@ -6,9 +57,29 @@
   --boardcontent-height: calc(100vh - var(--header-height) - var(--boardbar-height));
 }
 
+
 @media (prefers-color-scheme: dark) {
   .ant-modal .ant-modal-content {
     background-color: #333643;
+  }
+  .ant-input, .ant-input-affix-wrapper, .ant-input-group-addon, .ant-input-group .ant-input, .ant-input-textarea, .ant-select-selector {
+    background-color: #23242b !important;
+    color: #fff !important;
+    border-color: #444857 !important;
+  }
+  .ant-input::placeholder, .ant-input-textarea::placeholder {
+    color: #aaa !important;
+    opacity: 1;
+  }
+  .ant-select-dropdown {
+    background-color: #23242b !important;
+    color: #fff !important;
+  }
+  .ant-select-item-option-content {
+    color: #fff !important;
+  }
+  .ant-select-selection-item-remove {
+    color: #fff !important;
   }
 }
 
@@ -16,6 +87,9 @@
 
 @media (prefers-color-scheme: dark) {
   .ant-form-item-label > label {
+    color: #ffffff!important;
+  }
+  .ant-modal-close-x {
     color: #ffffff!important;
   }
 }
