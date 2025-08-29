@@ -1,20 +1,23 @@
-
-import React from 'react';
-import Modal from 'antd/es/modal';
+'use client'
 import { CardType } from '@/types/Board';
-import Image from 'next/image';
-import { UserOutlined, CommentOutlined, PaperClipOutlined } from '@ant-design/icons';
 import { formatName } from '@/utils/FormatName';
-
-
+import { CommentOutlined, PaperClipOutlined, UserOutlined } from '@ant-design/icons';
+import Button from 'antd/es/button';
+import Modal from 'antd/es/modal';
+import Image from 'next/image';
+import React, { useState } from 'react';
+import ConfirmModal from '../ui/ConfirmModal';
 
 interface CardModalProps {
   open: boolean;
   onClose: () => void;
+  onDeleteCard: (cardId: string) => void;
   card: CardType | null;
 }
 
-const CardModal: React.FC<CardModalProps> = ({ open, onClose, card }) => {
+const CardModal: React.FC<CardModalProps> = ({ open, onClose, card, onDeleteCard }) => {
+  const [openConfirmModal, setOpenConfirmModal] = useState<boolean>(false);
+
   if (!card) return null;
 
   // Priority badge color
@@ -27,8 +30,27 @@ const CardModal: React.FC<CardModalProps> = ({ open, onClose, card }) => {
     }
   };
 
+  const handleDeleteCardModal = () => {
+    if (card) {
+      setOpenConfirmModal(true);
+    }
+  };
+
   return (
-    <Modal open={open} onCancel={onClose} footer={null} centered width={700} >
+    <Modal open={open}
+      onCancel={onClose}
+      centered
+      width={700}
+      footer={[
+        <Button key="delete" color="danger" variant="solid" onClick={handleDeleteCardModal} className='min-w-[50px] min-h-[40px] rounded-md'>
+          <span className='font-bold'>Delete</span>
+        </Button>,
+        <Button key="back" type='primary' onClick={onClose} className='min-w-[50px] min-h-[40px] rounded-md'>
+          <span className='font-bold'>Back</span>
+        </Button>,
+      ]}
+
+    >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 dark:bg-[#333643]">
         {/* Left: Main Info */}
         <div className="flex flex-col gap-4">
@@ -101,7 +123,19 @@ const CardModal: React.FC<CardModalProps> = ({ open, onClose, card }) => {
           </div>
         </div>
       </div>
-    </Modal>
+      <ConfirmModal
+        open={openConfirmModal}
+        message="Are you sure you want to delete this card?"
+        okText="Delete"
+        cancelText="Cancel"
+        onClose={() => setOpenConfirmModal(false)}
+        onActiveFunction={() => {
+          onDeleteCard(card._id);
+          setOpenConfirmModal(false);
+          onClose();
+        }}
+      />
+        </Modal>
   );
 };
 

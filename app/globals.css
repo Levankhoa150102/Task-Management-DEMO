@@ -5,3 +5,17 @@
   --boardbar-height: 60px;
   --boardcontent-height: calc(100vh - var(--header-height) - var(--boardbar-height));
 }
+
+@media (prefers-color-scheme: dark) {
+  .ant-modal .ant-modal-content {
+    background-color: #333643;
+  }
+}
+
+
+
+@media (prefers-color-scheme: dark) {
+  .ant-form-item-label > label {
+    color: #ffffff!important;
+  }
+}
