@@ -1,5 +1,12 @@
+import dynamic from 'next/dynamic';
 import type { Metadata } from "next";
+import React from 'react';
 import "./globals.css";
+
+
+import Layout from 'antd/es/layout';
+
+const AppSider = dynamic(() => import('@/components/primary-ui/AppSider'), { ssr: true });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,7 +21,12 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body>
-        {children}
+        <Layout style={{ minHeight: '100vh' }}>
+          <AppSider />
+          <Layout>
+            {children}
+          </Layout>
+        </Layout>
       </body>
     </html>
   );
