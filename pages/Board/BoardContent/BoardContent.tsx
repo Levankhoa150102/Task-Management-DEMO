@@ -1,24 +1,26 @@
 'use client'
 import { BoardType, CardType, ColumnType } from '@/types/Board';
-import ListColumns from './ListColumns/ListColumns';
 import { mapOrder } from '@/utils/Sort';
-import { DndContext, DragEndEvent, PointerSensor, useSensor, useSensors, MouseSensor, TouchSensor, DragStartEvent, DragOverlay, defaultDropAnimationSideEffects, DragOverEvent, closestCorners, Active, Over } from '@dnd-kit/core';
-import { useEffect, useState } from 'react';
+import { Active, DndContext, DragEndEvent, DragOverEvent, DragOverlay, DragStartEvent, MouseSensor, Over, PointerSensor, TouchSensor, closestCorners, defaultDropAnimationSideEffects, useSensor, useSensors } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
-import { cloneDeep, isEmpty } from 'lodash'
+import { cloneDeep, isEmpty } from 'lodash';
+import { useEffect, useState } from 'react';
+import ListColumns from './ListColumns/ListColumns';
 
 
-import Column from './ListColumns/Column/Column';
-import Card from './ListColumns/Column/CardLists/Card/Card';
-import SideBar from '@/components/primary-ui/SideBar';
 import CardModal from '@/components/primary-ui/Modal';
-import { ModalProvider, useModalContext } from '@/context/ModalContent';
+import { useModalContext } from '@/context/ModalContent';
 import { GeneratePlaceholderCard } from '@/utils/GeneratePlaceHolderCard';
+import Card from './ListColumns/Column/CardLists/Card/Card';
+import Column from './ListColumns/Column/Column';
+import { generateId } from '@/utils/GenerateId';
 
 const ACTIVE_DRAG_ITEM_TYPE = {
     COLUMN: 'ACTIVE_DRAG_ITEM_TYPE_COLUMN',
     CARD: 'ACTIVE_DRAG_ITEM_TYPE_CARD',
 }
+
+
 
 function BoardContent({ board }: { board: BoardType }) {
     const pointerSensor = useSensor(PointerSensor, {
@@ -112,10 +114,89 @@ function BoardContent({ board }: { board: BoardType }) {
     const [activeDragItemData, setActiveDragItemData] = useState<ColumnType | CardType | null>(null)
     const [oldColumnWhenDraggingCard, setOldColumnWhenDraggingCard] = useState<ColumnType | null>(null)
 
+
     useEffect(() => {
         const orderedColumn = mapOrder(board.columns, board.columnOrderIds, '_id')
         setOrderColumn(orderedColumn)
     }, [board])
+
+    // Add new column
+    const handleAddColumn = () => {
+        const newColId = generateId('column-id');
+        const placeholderCardId = `card-id-${newColId}-placeholder-card`;
+        setOrderColumn(cols => [
+            ...cols,
+            {
+                _id: newColId,
+                boardId: cols[0]?.boardId || 'board-id',
+                title: 'New Column',
+                cardOrderIds: [placeholderCardId],
+                cards: [
+                    {
+                        _id: placeholderCardId,
+                        boardId: cols[0]?.boardId || 'board-id',
+                        columnId: newColId,
+                        title: '',
+                        description: '',
+                        cover: null,
+                        priority: 'low',
+                        memberIds: [],
+                        comments: [],
+                        attachments: [],
+                        FE_PlaceholderCard: true,
+                    }
+                ],
+            },
+        ]);
+    };
+
+    //Remove card
+    const handleDeleteCard = (cardId: string) => {
+        setOrderColumn(cols =>
+            cols.map(col =>
+                col._id === findColumnByCardId(cardId)?._id
+                    ? {
+                        ...col,
+                        cards: col.cards.filter(card => card._id !== cardId),
+                        cardOrderIds: col.cardOrderIds.filter(id => id !== cardId),
+                    }
+                    : col
+            )
+        );
+    }
+
+    const handleDeleteColumn = (columnId: string) => {
+        setOrderColumn(cols => cols.filter(col => col._id !== columnId));
+    }
+
+    // Add new card
+    const handleAddCard = (columnId: string) => {
+        setOrderColumn(cols =>
+            cols.map(col =>
+                col._id === columnId
+                    ? {
+                        ...col,
+                        cards: [
+                            ...col.cards,
+                            {
+                                _id: generateId('card-id'),
+                                boardId: col.boardId,
+                                columnId: col._id,
+                                title: 'New Card',
+                                description: '',
+                                cover: null,
+                                priority: 'low',
+                                memberIds: [],
+                                comments: [],
+                                attachments: [],
+                            },
+                        ],
+                        cardOrderIds: [...col.cardOrderIds, generateId('card-id')],
+                    }
+                    : col
+            )
+        );
+    };
 
     const findColumnByCardId = (cardId: string) => {
         return orderColumn.find(column => column.cards.map(card => card._id)?.includes(cardId))
@@ -149,7 +230,8 @@ function BoardContent({ board }: { board: BoardType }) {
         const activeColumn = findColumnByCardId(activeDraggingCardId as string)
         const overColumn = findColumnByCardId(overCardId as string)
 
-
+        console.log('activeColumn', activeColumn);
+        console.log('overColumn', overColumn);
 
         if (!activeColumn || !overColumn) return
 
@@ -266,32 +348,32 @@ function BoardContent({ board }: { board: BoardType }) {
     };
 
     return (
-            <div className={modalOpen ? 'pointer-events-none' : ''}>
-                <DndContext
-                    onDragStart={handleDragStart}
-                    onDragOver={handleDragOver}
-                    onDragEnd={handleDragEnd}
-                    sensors={sensors}
-                    collisionDetection={closestCorners}
-                >
+        <div className={modalOpen ? 'pointer-events-none' : ''}>
+            <DndContext
+                onDragStart={handleDragStart}
+                onDragOver={handleDragOver}
+                onDragEnd={handleDragEnd}
+                sensors={sensors}
+                collisionDetection={closestCorners}
+            >
 
-                    <div className='h-[var(--boardcontent-height)]  bg-[#1976D2] dark:bg-[#34495e] py-4 px-2'>
-                        {/*Column Lists */}
-                        <ListColumns columns={orderColumn}  />
-                        <DragOverlay dropAnimation={dropAnimation}>
-                            {(!activeDragItemType) && null}
-                            {(activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) && (
-                                <Column column={activeDragItemData as ColumnType} />
-                            )}
-                            {(activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.CARD) && (
-                                <Card card={activeDragItemData as CardType} />
-                            )}
-                        </DragOverlay>
-                    </div>
-                    <CardModal open={modalOpen} onClose={handleModalClose} card={selectedCard} />
+                <div className='h-[var(--boardcontent-height)]  bg-[#1976D2] dark:bg-[#34495e] py-4 px-2'>
+                    {/*Column Lists */}
+                    <ListColumns columns={orderColumn} onAddColumn={handleAddColumn} onAddCard={handleAddCard} onDeleteColumn={handleDeleteColumn} />
+                    <DragOverlay dropAnimation={dropAnimation}>
+                        {(!activeDragItemType) && null}
+                        {(activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) && (
+                            <Column column={activeDragItemData as ColumnType} />
+                        )}
+                        {(activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.CARD) && (
+                            <Card card={activeDragItemData as CardType} />
+                        )}
+                    </DragOverlay>
+                </div>
+                <CardModal open={modalOpen} onClose={handleModalClose} card={selectedCard} onDeleteCard={handleDeleteCard} />
 
-                </DndContext>
-            </div >
+            </DndContext>
+        </div >
 
     );
 }

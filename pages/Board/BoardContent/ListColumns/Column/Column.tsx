@@ -1,15 +1,16 @@
 'use client'
-import { AntCloudOutlined, CaretDownOutlined, CopyOutlined, DeleteOutlined, FileAddOutlined, MenuOutlined, ScissorOutlined, SnippetsOutlined } from '@ant-design/icons';
+import { ColumnType } from '@/types/Board';
+import { mapOrder } from '@/utils/Sort';
+import { CaretDownOutlined, DeleteOutlined, FileAddOutlined, MenuOutlined } from '@ant-design/icons';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 import Button from 'antd/es/button';
 import Dropdown from 'antd/es/dropdown/dropdown';
 import type { MenuProps } from 'antd/es/menu';
 import Space from 'antd/es/space';
 import { useState } from 'react';
 import CardLists from './CardLists/CardList';
-import { CardType, ColumnType } from '@/types/Board';
-import { mapOrder } from '@/utils/Sort';
-import { useSortable } from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities'
+import ConfirmModal from '@/components/ui/ConfirmModal';
 
 const items: MenuProps['items'] = [
     {
@@ -22,33 +23,6 @@ const items: MenuProps['items'] = [
         key: '0',
     },
     {
-        label: (
-            <div className='space-x-2'>
-                <ScissorOutlined />
-                <span>Cut</span>
-            </div>
-        ),
-        key: '1',
-    },
-    {
-        label: (
-            <div className='space-x-2'>
-                <CopyOutlined />
-                <span>Copy</span>
-            </div>
-        ),
-        key: '2',
-    },
-    {
-        label: (
-            <div className='space-x-2'>
-                <SnippetsOutlined />
-                <span>Paste</span>
-            </div>
-        ),
-        key: '3',
-    },
-    {
         type: 'divider',
     },
     {
@@ -58,20 +32,19 @@ const items: MenuProps['items'] = [
                 <span>Remove this column</span>
             </div>
         ),
-        key: '4',
+        key: '2',
     },
-    {
-        label: (
-            <div className='space-x-2'>
-                <AntCloudOutlined />
-                <span>Archive this column</span>
-            </div>
-        ),
-        key: '5',
-    },
+
 ];
-function Column({ column }: { column: ColumnType; }) {
+interface ColumnProps {
+    column: ColumnType;
+    onAddCard?: () => void;
+    onDeleteColumn?: () => void;
+}
+
+function Column({ column, onAddCard, onDeleteColumn }: ColumnProps) {
     const [open, setOpen] = useState(false);
+    const [openConfirmModal, setOpenConfirmModal] = useState(false);
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
         id: column._id, data: { ...column }
     });
@@ -81,8 +54,25 @@ function Column({ column }: { column: ColumnType; }) {
         height: '100%',
         opacity: isDragging ? 0.5 : 1,
     }
-
     const orderedCard = mapOrder(column.cards, column.cardOrderIds, '_id')
+
+    const handleDeleteColumn = () => {
+        setOpenConfirmModal(true);
+    }
+
+    const handleDropDown = ({ key }: { key: string }) => {
+        switch (key) {
+            case '0':
+                onAddCard?.();
+                break;
+            case '2':
+                handleDeleteColumn();
+                break;
+            default:
+                break;
+        }
+    }
+
     return (
         <div ref={setNodeRef}
             style={dndKitColumnStyles}
@@ -97,9 +87,7 @@ function Column({ column }: { column: ColumnType; }) {
                     <Dropdown
                         menu={{
                             items,
-                            onClick: ({ key }) => {
-                                console.log('Dropdown selected key:', key);
-                            }
+                            onClick: handleDropDown
                         }}
                         trigger={['click']}
                         onOpenChange={setOpen}
@@ -114,17 +102,28 @@ function Column({ column }: { column: ColumnType; }) {
                 </div>
 
                 {/*Column Cards List */}
-                <CardLists cards={orderedCard}  />
+                <CardLists cards={orderedCard} />
 
                 {/*Column Footer */}
                 <div className='flex items-center justify-between p-4 '>
-                    <Button color="default" variant="text">
+                    <Button color="default" variant="text" onClick={onAddCard}>
                         <FileAddOutlined style={{ color: '#1976D2' }} />
                         <span className='text-[#1976D2] font-semibold'>Add new card</span>
                     </Button>
                     <MenuOutlined className='cursor-grab' />
                 </div>
             </div>
+            <ConfirmModal
+                open={openConfirmModal}
+                message="Are you sure you want to delete this column?"
+                okText="Delete"
+                cancelText="Cancel"
+                onClose={() => setOpenConfirmModal(false)}
+                onActiveFunction={() => {
+                    onDeleteColumn?.();
+                    setOpenConfirmModal(false);
+                }}
+            />
         </div>
 
     );
