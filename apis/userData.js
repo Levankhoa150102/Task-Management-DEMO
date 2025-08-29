@@ -15,4 +15,20 @@ export const userData = [
         createdAt: new Date(),
         updatedAt: new Date(),
     },
+    {
+        id: '3',
+        email: 'user3@example.com',
+        password: '123458',
+        name: 'User Three',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    },
+    {
+        id: '4',
+        email: 'user4@example.com',
+        password: '123459',
+        name: 'User Four',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+    },
 ];

@@ -1,3 +1,4 @@
+import { modalStyles } from '@/constants/modelStyle';
 import Button from 'antd/es/button';
 import Modal from 'antd/es/modal';
 
@@ -12,11 +13,11 @@ type ConfirmModalProps = {
 
 const ConfirmModal = ({ open, message, okText, cancelText, onClose, onActiveFunction }: ConfirmModalProps) => {
     return (
-        <Modal open={open} onCancel={onClose} centered width={400} footer={null}>
+        <Modal open={open} onCancel={onClose} centered width={400} footer={null}  styles={modalStyles}>
             <div className="p-4">
                 <p className='text-2xl dark:text-white font-semibold'>{message}</p>
             </div>
-            <div className="flex justify-end p-4">
+            <div className="flex justify-end">
                 <Button onClick={onClose} type='primary' className='min-w-[50px] min-h-[40px] rounded-md mr-2'><span className='font-bold'>{cancelText || "Cancel"}</span></Button>
                 <Button onClick={onActiveFunction} type="primary" danger className='min-w-[50px] min-h-[40px] rounded-md'><span className='font-bold'>{okText || "OK"}</span></Button>
             </div>
