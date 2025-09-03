@@ -1,15 +1,16 @@
 'use client';
-import React, { useState } from 'react';
+import { useIsMobile } from '@/hook/DetectMobile';
 import {
-  DesktopOutlined,
   FileOutlined,
-  PieChartOutlined,
-  TeamOutlined,
-  UserOutlined,
+  HomeOutlined,
+  ProductOutlined,
+  TeamOutlined
 } from '@ant-design/icons';
 import Layout from 'antd/es/layout';
-import { MenuProps } from 'antd/es/menu';
-import Menu from 'antd/es/menu';
+import Menu, { MenuProps } from 'antd/es/menu';
+import { useRouter } from 'next/navigation';
+import { MenuInfo } from 'rc-menu/lib/interface';
+import React, { useState } from 'react';
 
 const { Sider } = Layout;
 
@@ -29,24 +30,33 @@ function getItem(
   } as MenuItem;
 }
 
+
 const items: MenuItem[] = [
-  getItem('Option 1', '1', <PieChartOutlined />),
-  getItem('Option 2', '2', <DesktopOutlined />),
-  getItem('User', 'sub1', <UserOutlined />, [
-    getItem('Tom', '3'),
-    getItem('Bill', '4'),
-    getItem('Alex', '5'),
-  ]),
-  getItem('Team', 'sub2', <TeamOutlined />, [getItem('Team 1', '6'), getItem('Team 2', '8')]),
-  getItem('Files', '9', <FileOutlined />),
+  getItem('Home', 'home', <HomeOutlined />),
+  getItem('My manager', 'my-manager', <ProductOutlined />),
+  getItem('Team', 'team', <TeamOutlined />, [getItem('Team 1', 'team-1'), getItem('Team 2', 'team-2')]),
+  getItem('Files', 'files', <FileOutlined />),
 ];
 
 const AppSider: React.FC = () => {
+  const router = useRouter();
+  const isMobile = useIsMobile();
   const [collapsed, setCollapsed] = useState(false);
+  const [currentTab, setCurrentTab] = useState('my-manager');
+
+  const handleDirectSider = (e: MenuInfo) => {
+    if (e.key === 'home') {
+      setCurrentTab('home');
+      router.push('/');
+    }
+
+  };
+
+
   return (
-    <Sider collapsible collapsed={collapsed} onCollapse={setCollapsed}>
+    <Sider collapsible collapsed={isMobile ? true : collapsed} onCollapse={setCollapsed} className='' trigger={isMobile ? null : undefined}>
       <div className="demo-logo-vertical" />
-      <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline" items={items} />
+      <Menu theme="dark" defaultSelectedKeys={[currentTab]} mode="inline" items={items} onClick={(e) => handleDirectSider(e)} />
     </Sider>
   );
 };
