@@ -1,14 +1,15 @@
-import Header from "@/components/primary-ui/Header";
-import BoardBar from "@/pages/Board/BoardBar/BoardBar";
-import BoardContent from "@/pages/Board/BoardContent/BoardContent";
-import { mockData } from "@/apis/mockData";
-import { ModalProvider } from "@/context/ModalContent";
+import Link from 'next/link';
+
 export default function Home() {
   return (
-        <ModalProvider>
-          <Header />
-          <BoardBar board={mockData.board} />
-          <BoardContent board={mockData.board} />
-        </ModalProvider>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-blue-700 via-blue-500 to-blue-300">
+      <h1 className="text-4xl font-bold text-white mb-6">Welcome to ManageWise</h1>
+      <p className="text-lg text-white mb-8">Your simple task management demo app.</p>
+      <Link href="/my-manager">
+        <button className="px-6 py-3 bg-[#1565c0] text-white rounded-lg shadow hover:bg-[#1976D2] transition-colors font-semibold text-lg cursor-pointer">
+          Go to My Manager
+        </button>
+      </Link>
+    </div>
   );
 }
